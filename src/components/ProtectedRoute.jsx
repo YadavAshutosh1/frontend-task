@@ -4,8 +4,10 @@ const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
 
-  // ❌ Agar token ya user nahi hai → login
+  // ❌ Agar token ya user nahi hai → cleanup + login
   if (!token || !user) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     return <Navigate to="/login" replace />;
   }
 

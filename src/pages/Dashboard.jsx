@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import TaskCard from "../components/TaskCard";
 import TaskModal from "../components/TaskModal";
@@ -14,8 +14,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
-  // Get logged in user info
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  // Get logged in user info (memoized to avoid new object on every render)
+  const user = useMemo(() => JSON.parse(localStorage.getItem("user") || "{}"), []);
 
   // ✅ LOGOUT
   const handleLogout = () => {

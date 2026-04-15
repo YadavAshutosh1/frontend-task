@@ -21,7 +21,8 @@ const Login = () => {
   // ✅ Already logged-in user ko redirect karo
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
+    const user = localStorage.getItem("user");
+    if (token && user) {
       navigate("/dashboard");
     }
   }, [navigate]);

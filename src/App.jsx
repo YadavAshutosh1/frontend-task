@@ -6,6 +6,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const token = localStorage.getItem("token");
+  const user = localStorage.getItem("user");
+  const isAuthenticated = !!(token && user);
 
   return (
     <Router>
@@ -14,12 +16,12 @@ function App() {
         {/* 🔓 Public Routes */}
         <Route 
           path="/login" 
-          element={token ? <Navigate to="/dashboard" /> : <Login />} 
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} 
         />
 
         <Route 
           path="/register" 
-          element={token ? <Navigate to="/dashboard" /> : <Register />} 
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Register />} 
         />
 
         {/* 🔒 Protected Route */}
@@ -36,7 +38,7 @@ function App() {
         <Route 
           path="*" 
           element={
-            token ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+            isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
           } 
         />
 
