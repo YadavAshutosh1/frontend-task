@@ -4,6 +4,8 @@ import TaskCard from "../components/TaskCard";
 import TaskModal from "../components/TaskModal";
 import TaskDetailModal from "../components/TaskDetailModal";
 import API from "../services/api";
+import { toast } from "react-toastify";
+import { isTaskExpired } from "../utils/helpers";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -13,6 +15,7 @@ const Dashboard = () => {
   const [editTaskData, setEditTaskData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [currentTime, setCurrentTime] = useState(Date.now()); // for re-rendering on expiry
 
   // Get logged in user info (memoized to avoid new object on every render)
   const user = useMemo(() => JSON.parse(localStorage.getItem("user") || "{}"), []);
@@ -77,14 +80,43 @@ const Dashboard = () => {
     else setLoading(false);
   }, [user._id]);
 
+  // ✅ REAL-TIME EXPIRY CHECK (Every 60s)
+  useEffect(() => {
+    // Keep track of tasks we've already toasted for this session
+    // to avoid spamming the user if they stay on the page long
+    const toastedTasks = new Set();
+
+    const checkExpiry = () => {
+      setCurrentTime(Date.now()); // trigger re-render
+      
+      tasks.forEach((task) => {
+        if (isTaskExpired(task._id) && !toastedTasks.has(task._id)) {
+          toast.warning(`Task "${task.title}" has expired! ⏰`);
+          toastedTasks.add(task._id);
+        }
+      });
+    };
+
+    // Check immediately, then every 60 seconds
+    checkExpiry();
+    const interval = setInterval(checkExpiry, 60000);
+
+    return () => clearInterval(interval);
+  }, [tasks]);
+
   // ✅ FILTER
   const filteredTasks =
     filter === "all"
       ? tasks
+      : filter === "expired"
+      ? tasks.filter((task) => isTaskExpired(task._id))
       : tasks.filter((task) => task.priority === filter);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-indigo-50 p-6 font-sans">
+      <div className="bg-yellow-200 text-yellow-800 text-center py-1 text-xs font-bold mb-4 rounded shadow-sm">
+        DEBUG: VERSION 2.0 (EXPIRY FEATURE ACTIVE)
+      </div>
       <div className="max-w-6xl mx-auto">
         
         {/* Header with User Info & Logout */}
@@ -121,6 +153,7 @@ const Dashboard = () => {
             <option value="high">High</option>
             <option value="medium">Medium</option>
             <option value="low">Low</option>
+            <option value="expired">Expired</option>
           </select>
         </div>
 

@@ -8,5 +8,6 @@ export const taskSchema = z.object({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return new Date(date) >= today;
-  }, "Date must be in future")
+  }, "Date must be in future"),
+  expiryDuration: z.string().min(1, "Expiry duration required")
 });

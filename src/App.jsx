@@ -3,6 +3,8 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -43,6 +45,7 @@ function App() {
         />
 
       </Routes>
+      <ToastContainer position="top-right" autoClose={3000} />
     </Router>
   );
 }
