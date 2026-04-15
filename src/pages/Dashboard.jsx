@@ -114,9 +114,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-indigo-50 p-6 font-sans">
-      <div className="bg-yellow-200 text-yellow-800 text-center py-1 text-xs font-bold mb-4 rounded shadow-sm">
-        DEBUG: VERSION 2.0 (EXPIRY FEATURE ACTIVE)
-      </div>
       <div className="max-w-6xl mx-auto">
         
         {/* Header with User Info & Logout */}
